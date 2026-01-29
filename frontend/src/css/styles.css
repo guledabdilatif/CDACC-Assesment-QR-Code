@@ -5,6 +5,7 @@
     --text-dark: #333;
 }
 
+
 .form-container {
     max-width: 850px;
     margin: 2rem auto;
@@ -309,7 +310,7 @@ input:focus {
 .verification-header {
     background: var(--tvet-navy);
     color: white;
-    padding: 2.5rem 2rem;
+    padding: 1rem 0.5rem;
     text-align: center;
 }
 
@@ -317,13 +318,13 @@ input:focus {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0);
     padding: 6px 16px;
     border-radius: 20px;
     font-size: 0.85rem;
-    border: 1px solid var(--tvet-gold);
-    color: var(--tvet-gold);
-    margin-bottom: 1rem;
+    border: 1px solid white;
+    color: white;
+    margin-top: 2rem;
 }
 
 .serial-text {
@@ -365,6 +366,7 @@ input:focus {
     border: 1px solid #e2e8f0;
     padding: 1rem;
     border-radius: 8px;
+    margin: 10px  0;
 }
 
 .verify-header {

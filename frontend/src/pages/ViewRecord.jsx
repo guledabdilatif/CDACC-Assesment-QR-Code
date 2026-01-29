@@ -33,7 +33,7 @@ export default function VerificationDetail({ records }) {
         {/* Status Header */}
         <header className="verification-header">
           <div className="status-badge">
-            <ShieldCheck size={20} />
+            <ShieldCheck size={20} color="white"/>
             Verified Assessment
           </div>
           <h1>Certification Verification</h1>
