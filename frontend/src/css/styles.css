@@ -1,0 +1,603 @@
+:root {
+    --tvet-blue: #2c4c94;
+    --tvet-gold: #b38b4d;
+    --bg-light: #f4f7f9;
+    --text-dark: #333;
+}
+
+.form-container {
+    max-width: 850px;
+    margin: 2rem auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.form-header {
+    padding: 2rem;
+    background: white;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.brand-accent {
+    height: 4px;
+    width: 60px;
+    background: var(--tvet-gold);
+    margin: 0 auto 1rem;
+}
+
+.form-header h2 {
+    color: var(--tvet-blue);
+    margin: 0;
+}
+
+.form-section {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--tvet-blue);
+    margin-bottom: 1.2rem;
+}
+
+.section-title h3 {
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.grid-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.three-col {
+    display: flex !important;
+    gap: 10px !important;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.three-col input {
+    margin: 0 10px;
+}
+
+.input-group label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.input-group {
+    margin: 10px 20px;
+}
+
+input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--tvet-blue);
+    box-shadow: 0 0 0 3px rgba(44, 76, 148, 0.1);
+}
+
+.candidate-box {
+    background: var(--bg-light);
+    padding: 2rem;
+    border-radius: 6px;
+    border-left: 4px solid var(--tvet-gold);
+    display: flex;
+    flex-direction: column;
+    gap: 10px 0;
+}
+
+.form-actions {
+    padding: 2rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    background: #fafafa;
+}
+
+.btn-primary {
+    background: var(--tvet-blue);
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid #ccc;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* table design  */
+/* Color Palette */
+:root {
+    --tvet-navy: #2C4C94;
+    --tvet-gold: #B38B4D;
+    --tvet-light-bg: #F8FAFC;
+    --border-color: #E2E8F0;
+}
+
+.table-container {
+    padding: 2rem;
+    background-color: var(--tvet-light-bg);
+    min-height: 100vh;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--tvet-gold);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-left h2 {
+    color: var(--tvet-navy);
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.header-left p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.icon-gold {
+    color: var(--tvet-gold);
+}
+
+/* Table Styling */
+.table-wrapper {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.cdacc-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.cdacc-table th {
+    background-color: var(--tvet-navy);
+    color: white;
+    padding: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+.cdacc-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    color: #334155;
+}
+
+.cdacc-table tr:hover {
+    background-color: #f1f5f9;
+}
+
+/* UI Elements */
+.course-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.course-tag {
+    color: var(--tvet-navy);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.serial-badge {
+    background: #f1f5f9;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+    color: var(--tvet-gold);
+    border: 1px solid var(--border-color);
+}
+
+.qr-wrapper {
+    display: inline-block;
+    padding: 5px;
+    background: white;
+    border: 1px solid var(--tvet-gold);
+    border-radius: 4px;
+}
+
+.view-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--tvet-navy);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.view-link:hover {
+    color: var(--tvet-gold);
+}
+
+.no-underline {
+    text-decoration: none;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem !important;
+    color: #94a3b8;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0 20px;
+}
+
+/* ViewPage  */
+.view-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.back-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--tvet-navy);
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.verification-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+.verification-header {
+    background: var(--tvet-navy);
+    color: white;
+    padding: 2.5rem 2rem;
+    text-align: center;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    border: 1px solid var(--tvet-gold);
+    color: var(--tvet-gold);
+    margin-bottom: 1rem;
+}
+
+.serial-text {
+    font-family: monospace;
+    opacity: 0.8;
+    margin-top: 0.5rem;
+}
+
+.verification-body {
+    padding: 2rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.info-item label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #64748b;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.info-item p {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--tvet-navy);
+    margin: 4px 0;
+}
+
+.candidate-verify-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.verify-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.digital-sig {
+    font-family: 'cursive', 'Brush Script MT';
+    color: #2c4c94;
+    border-bottom: 1px solid #e2e8f0;
+    display: inline-block;
+    padding: 4px 10px;
+    margin-top: 8px;
+}
+
+.verification-footer {
+    background: #f1f5f9;
+    padding: 1.5rem;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+/* resposiveness  */
+
+.grid-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px !important;
+}
+
+/* ============================= */
+/* 📱 Mobile Phones (max 600px) */
+/* ============================= */
+@media (max-width: 600px) {
+
+    .form-container {
+        padding: 10px;
+        width: 100% !important;
+    }
+
+    .styled-form {
+        padding: 15px;
+    }
+
+    .grid-row {
+        grid-template-columns: 1fr !important;
+        gap: 12px;
+    }
+
+    .three-col {
+        display: flex !important;
+        gap: 10px !important;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+
+    }
+
+    .candidate-box {
+        margin-bottom: 15px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .form-actions button {
+        width: 100%;
+    }
+
+    .form-header h2 {
+        font-size: 1.2rem;
+    }
+
+    .section-title h3 {
+        font-size: 1rem;
+    }
+}
+
+
+/* ============================= */
+/* 📱 Tablets (max 900px)       */
+/* ============================= */
+@media (max-width: 900px) {
+
+    .form-container {
+        padding: 15px;
+    }
+
+    .styled-form {
+        padding: 20px;
+    }
+
+    .grid-row {
+        grid-template-columns: 1fr 1fr;
+
+    }
+
+    .grid-row.three-col {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .form-actions {
+        gap: 12px;
+    }
+}
+
+
+/* ============================= */
+/* 💻 Small Laptops (max 1200px) */
+/* ============================= */
+@media (max-width: 1200px) {
+
+    .form-container {
+        max-width: 95%;
+        margin: auto;
+    }
+
+}
+
+.grid-row.three-col {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* table media queries  */
+/* ============================= */
+/* 📱 Mobile Phones (max 600px) */
+/* ============================= */
+@media (max-width: 600px) {
+
+    .table-container {
+        padding: 10px;
+    }
+
+    .table-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .header-actions {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .header-actions .btn-primary,
+    .header-actions .btn-secondary {
+      
+        justify-content: center;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .cdacc-table {
+        font-size: 0.85rem;
+        min-width: 650px;
+        /* forces horizontal scroll instead of squishing */
+    }
+
+    .qr-wrapper canvas {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    .course-info small {
+        display: block;
+        font-size: 0.7rem;
+    }
+
+    .serial-badge {
+        font-size: 0.7rem;
+        padding: 2px 6px;
+    }
+}
+
+
+/* ============================= */
+/* 📱 Tablets (max 900px)       */
+/* ============================= */
+@media (max-width: 900px) {
+
+    .table-container {
+        padding: 15px;
+    }
+
+    .table-header {
+        gap: 10px;
+    }
+
+    .header-actions {
+        gap: 10px;
+    }
+
+    .cdacc-table {
+        font-size: 0.9rem;
+    }
+
+    .qr-wrapper canvas {
+        width: 45px !important;
+        height: 45px !important;
+    }
+
+    .course-tag {
+        font-size: 0.75rem;
+    }
+}
+
+
+/* ============================= */
+/* 💻 Small Laptops (max 1200px) */
+/* ============================= */
+@media (max-width: 1200px) {
+
+    .table-container {
+        max-width: 98%;
+        margin: auto;
+    }
+
+}
