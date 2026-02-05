@@ -1,22 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-  ClipboardCheck, 
-  User, 
-  BookOpen, 
-  Hash, 
-  Building2, 
-  ShieldCheck, 
-  Save 
+import axios from 'axios'
+import {
+  ClipboardCheck,
+  User,
+  BookOpen,
+  Hash,
+  Building2,
+  ShieldCheck,
+  Save
 } from "lucide-react";
-
+const ApiUrl = import.meta.env.VITE_API_URL
 export default function AddRecord({ addRecord }) {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     centerName: "", serialNo: "", courseName: "", level: "",
     unitCode: "", unitName: "", totalTools: "",
     c1name: "", c1reg: "", c2name: "", c2reg: "",
-    headName: "", supervisorName: ""
+    headName: "", supervisorName: "", dateCreated: new Date()
   });
 
   const handleChange = (e) => {
@@ -25,22 +26,19 @@ export default function AddRecord({ addRecord }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const record = {
-      id: Date.now().toString(),
-      supervisorSection: { ...form }, // simplified for demo
-      candidates: [
-        { name: form.c1name, regNo: form.c1reg, signature: "Signed" },
-        { name: form.c2name, regNo: form.c2reg, signature: "Signed" }
-      ],
-      head: { name: form.headName, signature: "Signed" },
-      declaration: {
-        supervisorName: form.supervisorName,
-        time: new Date().toLocaleString(),
-        signature: "Signed"
+    try {
+      async function addqrdata(qrcode) {
+        const response = await axios.post(`${ApiUrl}/qr`, qrcode);
+        setForm(response.data)
       }
-    };
-    addRecord(record);
-    navigate("/");
+      addqrdata(form)
+      alert("Data inserted Succesfully")
+      navigate("/");
+
+    } catch (error) {
+      throw new Error("Data cannot be inserted ):")
+    }
+
   };
 
   return (

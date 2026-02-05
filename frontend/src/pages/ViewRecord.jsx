@@ -1,26 +1,31 @@
 import { Link, useParams } from "react-router-dom";
-import { 
-  ArrowLeft, 
-  CheckCircle2, 
-  UserCheck, 
-  Building, 
-  BookOpen, 
+import {
+  ArrowLeft,
+  CheckCircle2,
+  UserCheck,
+  Building,
+  BookOpen,
   Calendar,
   ShieldCheck,
   Award
 } from "lucide-react";
+import axios from "axios";
 import '../css/styles.css'
-
-export default function VerificationDetail({ records }) {
+import { useEffect } from "react";
+import { useState } from "react";
+const ApiUrl = import.meta.env.VITE_API_URL
+export default function VerificationDetail() {
+  const [qrCode, setQrCode] = useState({})
   const { id } = useParams();
-  const record = records.find(r => r.id === id);
+  useEffect(() => {
+    async function fetchQrCodes(id) {
+      const response = await axios.get(`${ApiUrl}/qr/${id}`);
+      setQrCode(response.data);
+    }
+    fetchQrCodes(id)
+  }, [])
 
-  if (!record) return (
-    <div className="error-container">
-      <h2>Record Not Found</h2>
-      <Link to="/" className="btn-secondary">Return to Register</Link>
-    </div>
-  );
+
 
   return (
     <div className="view-container">
@@ -33,11 +38,11 @@ export default function VerificationDetail({ records }) {
         {/* Status Header */}
         <header className="verification-header">
           <div className="status-badge">
-            <ShieldCheck size={20} color="white"/>
+            <ShieldCheck size={20} color="white" />
             Verified Assessment
           </div>
           <h1>Certification Verification</h1>
-          <p className="serial-text">Serial No: <span>{record.supervisorSection.serialNo}</span></p>
+          <p className="serial-text">Serial No: <span>{qrCode.serialNo}</span></p>
         </header>
 
         <div className="verification-body">
@@ -45,12 +50,12 @@ export default function VerificationDetail({ records }) {
           <section className="info-grid">
             <div className="info-item">
               <label><Building size={16} /> Center</label>
-              <p>{record.supervisorSection.centerName}</p>
+              <p>{qrCode.centerName}</p>
             </div>
             <div className="info-item">
               <label><BookOpen size={16} /> Course & Unit</label>
-              <p>{record.supervisorSection.courseName}</p>
-              <small>{record.supervisorSection.unitName}</small>
+              <p>{qrCode.courseName}</p>
+              <small>{qrCode.unitName}</small>
             </div>
           </section>
 
@@ -60,16 +65,24 @@ export default function VerificationDetail({ records }) {
           <section className="detail-section">
             <h3><UserCheck size={20} className="icon-gold" /> Candidate Representatives</h3>
             <div className="candidate-grid">
-              {record.candidates.map((c, i) => (
-                <div key={i} className="candidate-verify-box">
-                  <div className="verify-header">
-                    <span className="candidate-label">Candidate {i + 1}</span>
-                    <CheckCircle2 size={16} className="text-success" />
-                  </div>
-                  <p><strong>{c.name}</strong></p>
-                  <p className="reg-no">{c.regNo}</p>
+
+              <div className="candidate-verify-box">
+                <div className="verify-header">
+                  <span className="candidate-label">1</span>
+                  <CheckCircle2 size={16} className="text-success" />
                 </div>
-              ))}
+                <p><strong>{qrCode.c1name}</strong></p>
+                <p className="reg-no">{qrCode.c1reg}</p>
+              </div>
+              <div className="candidate-verify-box">
+                <div className="verify-header">
+                  <span className="candidate-label">2</span>
+                  <CheckCircle2 size={16} className="text-success" />
+                </div>
+                <p><strong>{qrCode.c2name}</strong></p>
+                <p className="reg-no">{qrCode.c1reg}</p>
+              </div>
+
             </div>
           </section>
 
@@ -77,16 +90,16 @@ export default function VerificationDetail({ records }) {
           <section className="detail-section signatures">
             <div className="sig-card">
               <label>Head of Institution</label>
-              <p className="sig-name">{record.head.name}</p>
+              <p className="sig-name">{qrCode.headName}</p>
               <div className="digital-sig">Digitally Signed</div>
             </div>
-            
+
             <div className="sig-card">
               <label>Supervisor Declaration</label>
-              <p className="sig-name">{record.declaration.supervisorName}</p>
+              <p className="sig-name">{qrCode.supervisorName}</p>
               <div className="digital-sig">Digitally Signed</div>
               <small className="timestamp">
-                <Calendar size={12} /> {record.declaration.time}
+                <Calendar size={12} /> {qrCode.time}
               </small>
             </div>
           </section>
