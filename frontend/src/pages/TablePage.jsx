@@ -157,17 +157,17 @@ export default function TablePage() {
                   />
                 </td>
                 <td className="text-center" >
-                 <div style={{display:'flex'}}>
-                   <Link to={'/'} className="view-link">
-                    <PencilLine size={30} color="black"/>                   
-                  </Link>
-                  <Link to={`/record/${r._id}`} className="view-link" style={{margin:'0 10px'}}>
-                    <Eye size={30} />
-                  </Link>
-                  <Link onClick={() => DeleteQrCode(r._id)} className="view-link">
-                    <Trash size={30} color="red" />
-                  </Link>
-                 </div>
+                  <div style={{ display: 'flex' }}>
+                    <Link to={`/edit/${r._id}`} className="view-link">
+                      <PencilLine size={30} color="black" />
+                    </Link>
+                    <Link to={`/record/${r._id}`} className="view-link" style={{ margin: '0 10px' }}>
+                      <Eye size={30} />
+                    </Link>
+                    <Link onClick={() => DeleteQrCode(r._id)} className="view-link">
+                      <Trash size={30} color="red" />
+                    </Link>
+                  </div>
                 </td>
               </tr>
             ))}
