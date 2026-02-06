@@ -3,17 +3,17 @@ import TablePage from "./pages/TablePage";
 import AddRecord from "./pages/AddRecord";
 import ViewRecord from "./pages/ViewRecord";
 import Login from "./pages/Login"; // New
-import Dashboard from "./pages/Dashboard"; // New
+import Dashboard from "./pages/Dashboard/Dashboard"; // New
 import ProtectedRoute from "./utils/ProtectedRoute"; // New
 
 export default function App() {
   return (
     <Routes>
       {/* Public Route */}
-      <Route path="/login" element={<Login />} />
+      <Route path="/" element={<Login />} />
 
       {/* Protected Routes - Wrapping your existing pages */}
-      <Route path="/" element={
+      <Route path="/qrs" element={
         <ProtectedRoute>
           <TablePage />
         </ProtectedRoute>

@@ -50,7 +50,7 @@ export default function AddRecord() {
         await axios.post(`${ApiUrl}/qr`, form);
         alert("Data inserted successfully");
       }
-      navigate("/");
+      navigate("/qrs");
     } catch (error) {
       console.error("Submission error:", error);
       alert("Error saving data");
@@ -109,7 +109,7 @@ export default function AddRecord() {
         </section>
 
         <div className="form-actions">
-          <button type="button" className="btn-secondary" onClick={() => navigate("/")}>Cancel</button>
+          <button type="button" className="btn-secondary" onClick={() => navigate("/qrs")}>Cancel</button>
           <button type="submit" className="btn-primary">
             <Save size={18} /> {isEditMode ? "Update Assessment" : "Save Assessment"}
           </button>
