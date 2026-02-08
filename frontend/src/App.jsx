@@ -5,6 +5,7 @@ import ViewRecord from "./pages/ViewRecord";
 import Login from "./pages/Login"; // New
 import Dashboard from "./pages/Dashboard/Dashboard"; // New
 import ProtectedRoute from "./utils/ProtectedRoute"; // New
+import Profile from "./Components/Profile";
 
 export default function App() {
   return (
@@ -40,6 +41,11 @@ export default function App() {
       <Route path="/edit/:id" element={
         <ProtectedRoute>
           <AddRecord />
+        </ProtectedRoute>
+      } />
+      <Route path="/profile" element={
+        <ProtectedRoute>
+          <Profile />
         </ProtectedRoute>
       } />
 

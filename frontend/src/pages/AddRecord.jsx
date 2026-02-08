@@ -40,6 +40,8 @@ export default function AddRecord() {
   // 2. Handle both Add and Update
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Is Edit Mode:", isEditMode); // Should be true
+    console.log("Current ID:", id);
     try {
       if (isEditMode) {
         // Update existing record
@@ -96,14 +98,14 @@ export default function AddRecord() {
           </div>
           {/* Section: Candidates (Example of value binding) */}
           <div className="candidate-box">
-             <small>Candidate 1</small>
-             <input name="c1name" value={form.c1name} placeholder="Full Name" onChange={handleChange} />
-             <input name="c1reg" value={form.c1reg} placeholder="Registration No" onChange={handleChange} />
+            <small>Candidate 1</small>
+            <input name="c1name" value={form.c1name} placeholder="Full Name" onChange={handleChange} />
+            <input name="c1reg" value={form.c1reg} placeholder="Registration No" onChange={handleChange} />
           </div>
           <div className="candidate-box">
-             <small>Candidate 2</small>
-             <input name="c2name" value={form.c2name} placeholder="Full Name" onChange={handleChange} />
-             <input name="c2reg" value={form.c2reg} placeholder="Registration No" onChange={handleChange} />
+            <small>Candidate 2</small>
+            <input name="c2name" value={form.c2name} placeholder="Full Name" onChange={handleChange} />
+            <input name="c2reg" value={form.c2reg} placeholder="Registration No" onChange={handleChange} />
           </div>
           {/* ... Apply to remaining inputs ... */}
         </section>

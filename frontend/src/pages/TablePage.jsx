@@ -6,6 +6,8 @@ import axios from "axios";
 import '../css/styles.css';
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import SideBar from "../utils/SideBar";
+import Navbar from "../Components/Navbar";
 
 const ApiUrl = import.meta.env.VITE_API_URL;
 
@@ -102,78 +104,96 @@ export default function TablePage() {
     }
   }
   return (
-    <div className="table-container">
-      <header className="table-header">
-        <div className="header-left">
-          <LayoutList className="icon-gold" size={28} />
-          <div>
-            <h2>Assessment Register</h2>
-            <p>Official CDACC Certification Records</p>
+    <>
+      <div style=
+        {{ display: 'flex', justifyContent: 'space-between', width: "100%" }}
+      >
+        <SideBar />
+        < div style={{
+          flex: 1,
+          marginLeft: '250px', // Pushes content past the fixed sidebar
+          width: 'calc(100% - 250px)',
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          <Navbar />
+          <div className="table-container">
+            <header className="table-header">
+              <div className="header-left">
+                <LayoutList className="icon-gold" size={28} />
+                <div>
+                  <h2>Assessment Register</h2>
+                  <p>Official CDACC Certification Records</p>
+                </div>
+              </div>
+
+              <div className="header-actions">
+                <button onClick={handleDownloadAllPDF} className="btn-secondary">
+                  <FileDown size={18} /> Download High-Res QRs
+                </button>
+                <Link to="/add" className="btn-primary no-underline">
+                  <Plus size={18} /> Add New Record
+                </Link>
+              </div>
+            </header>
+
+            <div className="table-wrapper">
+              <table className="cdacc-table">
+                <thead>
+                  <tr>
+                    <th>S/NO</th>
+                    <th>Center</th>
+                    <th>Course & Unit</th>
+                    <th>Serial</th>
+                    <th className="text-center">Verification QR</th>
+                    <th className="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody >
+                  {qrData.map((r, index) => (
+                    <tr key={r._id} >
+                      <td className="font-bold">{index + 1}</td>
+                      <td className="font-bold">{r.centerName}</td>
+                      <td>
+                        <div className="course-info">
+                          <span className="course-tag">{r.courseName}</span>
+                          <small>{r.unitName}</small>
+                        </div>
+                      </td>
+                      <td><code className="serial-badge">{r.serialNo}</code></td>
+                      <td className="text-center">
+                        {/* size=300 ensures the PDF grab is high-res */}
+                        <QRCodeCanvas
+                          id={`qr-${r._id}`}
+                          value={`${window.location.origin}/record/${r._id}`}
+                          size={300}
+                          style={{ width: "50px", height: "50px" }}
+                          level="H"
+                        />
+                      </td>
+                      <td className="text-center" >
+                        <div style={{ display: 'flex' }}>
+                          <Link to={`/edit/${r._id}`} className="view-link">
+                            <PencilLine size={30} color="black" />
+                          </Link>
+                          <Link to={`/record/${r._id}`} className="view-link" style={{ margin: '0 10px' }}>
+                            <Eye size={30} />
+                          </Link>
+                          <Link onClick={() => DeleteQrCode(r._id)} className="view-link">
+                            <Trash size={30} color="red" />
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
-        <div className="header-actions">
-          <button onClick={handleDownloadAllPDF} className="btn-secondary">
-            <FileDown size={18} /> Download High-Res QRs
-          </button>
-          <Link to="/add" className="btn-primary no-underline">
-            <Plus size={18} /> Add New Record
-          </Link>
-        </div>
-      </header>
-
-      <div className="table-wrapper">
-        <table className="cdacc-table">
-          <thead>
-            <tr>
-              <th>S/NO</th>
-              <th>Center</th>
-              <th>Course & Unit</th>
-              <th>Serial</th>
-              <th className="text-center">Verification QR</th>
-              <th className="text-center">Action</th>
-            </tr>
-          </thead>
-          <tbody >
-            {qrData.map((r, index) => (
-              <tr key={r._id} >
-                <td className="font-bold">{index + 1}</td>
-                <td className="font-bold">{r.centerName}</td>
-                <td>
-                  <div className="course-info">
-                    <span className="course-tag">{r.courseName}</span>
-                    <small>{r.unitName}</small>
-                  </div>
-                </td>
-                <td><code className="serial-badge">{r.serialNo}</code></td>
-                <td className="text-center">
-                  {/* size=300 ensures the PDF grab is high-res */}
-                  <QRCodeCanvas
-                    id={`qr-${r._id}`}
-                    value={`${window.location.origin}/record/${r._id}`}
-                    size={300}
-                    style={{ width: "50px", height: "50px" }}
-                    level="H"
-                  />
-                </td>
-                <td className="text-center" >
-                  <div style={{ display: 'flex' }}>
-                    <Link to={`/edit/${r._id}`} className="view-link">
-                      <PencilLine size={30} color="black" />
-                    </Link>
-                    <Link to={`/record/${r._id}`} className="view-link" style={{ margin: '0 10px' }}>
-                      <Eye size={30} />
-                    </Link>
-                    <Link onClick={() => DeleteQrCode(r._id)} className="view-link">
-                      <Trash size={30} color="red" />
-                    </Link>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
-    </div>
+    </>
+
   );
 }

@@ -30,7 +30,7 @@ export default function VerificationDetail() {
   return (
     <div className="view-container">
       {/* Back Button */}
-      <Link to="/" className="back-link">
+      <Link to="/qrs" className="back-link">
         <ArrowLeft size={18} /> Back to Register
       </Link>
 
