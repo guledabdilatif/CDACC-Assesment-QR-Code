@@ -19,6 +19,7 @@ export default function AddRecord() {
 
   // 1. Fetch data if in Edit Mode
   useEffect(() => {
+
     if (isEditMode) {
       const fetchRecord = async () => {
         try {
@@ -42,6 +43,7 @@ export default function AddRecord() {
     e.preventDefault();
     console.log("Is Edit Mode:", isEditMode); // Should be true
     console.log("Current ID:", id);
+    
     try {
       if (isEditMode) {
         // Update existing record

@@ -15,9 +15,9 @@ export default function App() {
 
       {/* Protected Routes - Wrapping your existing pages */}
       <Route path="/qrs" element={
-        <ProtectedRoute>
+       
           <TablePage />
-        </ProtectedRoute>
+      
       } />
       
       <Route path="/dashboard" element={
@@ -27,21 +27,21 @@ export default function App() {
       } />
 
       <Route path="/add" element={
-        <ProtectedRoute>
+       
           <AddRecord />
-        </ProtectedRoute>
+      
       } />
 
       <Route path="/record/:id" element={
-        <ProtectedRoute>
+    
           <ViewRecord />
-        </ProtectedRoute>
+       
       } />
 
       <Route path="/edit/:id" element={
-        <ProtectedRoute>
+      
           <AddRecord />
-        </ProtectedRoute>
+       
       } />
       <Route path="/profile" element={
         <ProtectedRoute>
