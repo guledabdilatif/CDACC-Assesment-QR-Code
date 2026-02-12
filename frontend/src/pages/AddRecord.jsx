@@ -43,7 +43,7 @@ export default function AddRecord() {
     e.preventDefault();
     console.log("Is Edit Mode:", isEditMode); // Should be true
     console.log("Current ID:", id);
-    
+
     try {
       if (isEditMode) {
         // Update existing record
@@ -83,9 +83,13 @@ export default function AddRecord() {
               <input name="centerName" value={form.centerName} required onChange={handleChange} />
             </div>
             <div className="input-group">
-              <label><Hash size={16} /> Serial No</label>
-              <input name="serialNo" value={form.serialNo} required onChange={handleChange} />
+              <label><Hash size={16} /> Total Tools</label>
+              <input name="totalTools" value={form.totalTools} required onChange={handleChange} />
             </div>
+          </div>
+          <div className="input-group">
+            <label><Hash size={16} /> Serial No</label>
+            <input name="serialNo" value={form.serialNo} required onChange={handleChange} />
           </div>
           {/* ... Repeat value={form.fieldName} for ALL other inputs ... */}
           <div className="grid-row">
@@ -97,6 +101,10 @@ export default function AddRecord() {
               <label>Level</label>
               <input name="level" value={form.level} placeholder="e.g. Level 6" onChange={handleChange} />
             </div>
+          </div>
+          <div className="input-group">
+            <label><BookOpen size={16} /> unitCode </label>
+            <input name="unitCode" value={form.unitCode} onChange={handleChange} />
           </div>
           {/* Section: Candidates (Example of value binding) */}
           <div className="candidate-box">

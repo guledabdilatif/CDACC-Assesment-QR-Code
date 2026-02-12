@@ -53,9 +53,10 @@ export default function VerificationDetail() {
               <p>{qrCode.centerName}</p>
             </div>
             <div className="info-item">
-              <label><BookOpen size={16} /> Course & Unit</label>
-              <p>{qrCode.courseName}</p>
-              <small>{qrCode.unitName}</small>
+              <label><BookOpen size={16} /> Course, Unit and Unit Code</label>
+              <p>Course Name: {qrCode.courseName}</p>
+              <small>Unit name: {qrCode.unitName}</small> <br />
+              <small>Unit Code: {qrCode.unitCode}</small>
             </div>
           </section>
 
@@ -103,6 +104,10 @@ export default function VerificationDetail() {
               </small>
             </div>
           </section>
+        </div>
+        <div className="candidate-verify-box sig-card" style={{margin:"30px"}}>
+          <p><strong>Total Tools</strong></p>
+          <p className="reg-no">{qrCode.totalTools}</p>
         </div>
 
         <footer className="verification-footer">
