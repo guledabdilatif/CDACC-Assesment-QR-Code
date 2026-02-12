@@ -25,7 +25,6 @@ const Login = () => {
         setError('');
         
         try {
-            // Swapped fetch for Axios
             const response = await axios.post(`${ApiUrl}/login`, { email, password });
             
             if (response.data.token) {
@@ -114,7 +113,6 @@ const Login = () => {
                         </div>
                     </div>
 
-                    {/* Password Input */}
                     <div style={{ textAlign: 'left' }}>
                         <label style={{ fontSize: '0.85rem', fontWeight: '600', color: colors.navy, marginBottom: '8px', display: 'block' }}>
                             Password
