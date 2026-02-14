@@ -2,8 +2,8 @@ require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./connect");
-const authRoutes = require("./Routes/authRoutes");
 const qrRoutes = require('./Routes/qrCodes');
+const authRoutes = require('./Routes/authRoutes');
 
 const app = express();
 const PORT = 3000;

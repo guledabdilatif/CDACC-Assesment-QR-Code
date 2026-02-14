@@ -1,73 +1,129 @@
 const express = require('express');
+const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-let database = require('../connect');
-let authRoutes = express.Router();
-const ObjectId = require('mongodb').ObjectId;
+const User = require('../models/User');
 
 const SALT_ROUNDS = 10;
 
-// REGISTER USER
-authRoutes.route('/register').post(async (req, res) => {
-    let db = database.getDb();
-    const { name, email, password } = req.body;
+const verifyToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Extract "Bearer TOKEN"
 
-    const existingUser = await db.collection('users').findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "User already exists" });
+    if (!token) return res.status(401).json({ message: "Access denied. No token provided." });
 
-    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-    let result = await db.collection('users').insertOne({
-        name,
-        email,
-        password: hashedPassword,
-        dateJoined: new Date()
-    });
-    res.status(201).json(result);
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded; // Contains the { id: user._id } we signed earlier
+        next();
+    } catch (error) {
+        res.status(403).json({ message: "Invalid or expired token" });
+    }
+};
+
+module.exports = verifyToken;
+
+// 1. REGISTER: Create a new user (POST)
+router.post('/register', async (req, res) => {
+    try {
+        const { name, email, password } = req.body;
+
+        // Check if user exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) return res.status(400).json({ message: "User already exists" });
+
+        // Hash password and save
+        const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+        const newUser = new User({
+            name,
+            email,
+            password: hashedPassword
+        });
+
+        const savedUser = await newUser.save();
+        res.status(201).json(savedUser);
+    } catch (error) {
+        res.status(400).json({ message: "Error registering user", error });
+    }
 });
 
-// LOGIN USER
-authRoutes.route('/login').post(async (req, res) => {
+// 2. LOGIN: Authenticate user (POST)
+router.post('/login', async (req, res) => {
     try {
-        let db = database.getDb();
-        if (!db) {
-            return res.status(503).json({ message: "Database is starting up, please try again." });
-        }
-
         const { email, password } = req.body;
-        const user = await db.collection('users').findOne({ email });
+        const user = await User.findOne({ email });
 
         if (!user) return res.status(404).json({ message: "User not found" });
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
 
-        // Ensure JWT_SECRET is loaded
-        if (!process.env.JWT_SECRET) {
-            console.error("CRITICAL: JWT_SECRET is missing from .env");
-            return res.status(500).json({ message: "Server configuration error" });
-        }
-
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ message: "Success", token, user: { name: user.name, email: user.email } });
-
+        
+        res.json({ 
+            message: "Success", 
+            token, 
+            user: { name: user.name, email: user.email } 
+        });
     } catch (error) {
-        console.error("Login Error:", error);
-        res.status(500).json({ message: "Something went wrong on the server" });
+        res.status(500).json({ message: "Login error", error });
     }
 });
 
-// GET ALL USERS
-authRoutes.route('/users').get(async (req, res) => {
-    let db = database.getDb();
-    let data = await db.collection('users').find({}).project({ password: 0 }).toArray();
-    res.json(data);
+// 3. READ: Get all users (GET)
+router.get('/users', async (req, res) => {
+    try {
+        const users = await User.find().select('-password'); // Exclude password from results
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching users", error });
+    }
 });
 
-// GET CURRENT USER (Simulated via ID for Postman testing)
-authRoutes.route('/users/:id').get(async (req, res) => {
-    let db = database.getDb();
-    let data = await db.collection('users').findOne({ _id: new ObjectId(req.params.id) }, { projection: { password: 0 } });
-    data ? res.json(data) : res.status(404).send("Not Found");
+// 4. READ: Get a single user by ID (GET)
+router.get('/users/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).select('-password');
+        if (!user) return res.status(404).json({ message: "User not found" });
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching user", error });
+    }
+});
+// 1. GET PROFILE (The /me route)
+router.get('/me', verifyToken, async (req, res) => {
+    try {
+        // req.user.id comes from the decoded token in our middleware
+        const user = await User.findById(req.user.id).select('-password');
+        
+        if (!user) return res.status(404).json({ message: "User not found" });
+        
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching profile", error });
+    }
 });
 
-module.exports = authRoutes;
+// 2. UPDATE PASSWORD
+router.post('/update-password', verifyToken, async (req, res) => {
+    try {
+        const { newPassword } = req.body;
+        
+        if (!newPassword || newPassword.length < 6) {
+            return res.status(400).json({ message: "Password must be at least 6 characters" });
+        }
+
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+        // Update the user document
+        await User.findByIdAndUpdate(req.user.id, {
+            password: hashedPassword
+        });
+
+        res.json({ message: "Password updated successfully!" });
+    } catch (error) {
+        res.status(500).json({ message: "Error updating password", error });
+    }
+});
+module.exports = router;

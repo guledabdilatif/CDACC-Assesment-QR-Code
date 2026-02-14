@@ -15,42 +15,42 @@ export default function App() {
 
       {/* Protected Routes - Wrapping your existing pages */}
       <Route path="/qrs" element={
-       
+        <ProtectedRoute>
           <TablePage />
-      
+        </ProtectedRoute>
       } />
-      
-      <Route path="/dashboard" element={
-        <ProtectedRoute>
+
+      < Route path="/dashboard" element={
+        < ProtectedRoute >
           <Dashboard />
-        </ProtectedRoute>
+        </ProtectedRoute >
       } />
 
-      <Route path="/add" element={
-       
-          <AddRecord />
-      
-      } />
-
-      <Route path="/record/:id" element={
-    
-          <ViewRecord />
-       
-      } />
-
-      <Route path="/edit/:id" element={
-      
-          <AddRecord />
-       
-      } />
-      <Route path="/profile" element={
+      < Route path="/add" element={
         <ProtectedRoute>
+          < AddRecord />
+        </ProtectedRoute >
+      } />
+
+      < Route path="/record/:id" element={
+        < ProtectedRoute >
+          <ViewRecord />
+        </ProtectedRoute >
+      } />
+
+      < Route path="/edit/:id" element={
+        < ProtectedRoute >
+          <AddRecord />
+        </ProtectedRoute >
+      } />
+      < Route path="/profile" element={
+        < ProtectedRoute >
           <Profile />
-        </ProtectedRoute>
+        </ProtectedRoute >
       } />
 
       {/* Fallback to login if route doesn't exist */}
       <Route path="*" element={<Navigate to="/login" />} />
-    </Routes>
+    </Routes >
   );
 }
