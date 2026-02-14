@@ -37,10 +37,11 @@ const Navbar = () => {
             display: 'flex',
             justifyContent: 'flex-end', // Pushes all content to the right
             alignItems: 'center',
+            backgroundColor:"white",
             position: 'fixed',
             top: 0,
-            left: '260px', // Starts exactly where sidebar ends
-            width: 'calc(100% - 260px)', // Occupies only the available width
+            right:'10px', // Starts exactly where sidebar ends
+            width: "100%", // Occupies only the available width
             zIndex: 1000,
             boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
             boxSizing: 'border-box' // Prevents padding from breaking the width calculation
