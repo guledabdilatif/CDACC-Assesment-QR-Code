@@ -126,4 +126,29 @@ router.post('/update-password', verifyToken, async (req, res) => {
         res.status(500).json({ message: "Error updating password", error });
     }
 });
+
+// DELETE USER
+router.delete('/users/:id', verifyToken, async (req, res) => {
+    try {
+        await User.findByIdAndDelete(req.params.id);
+        res.json({ message: "User deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Error deleting user" });
+    }
+});
+
+// UPDATE USER (General Info)
+router.put('/users/:id', verifyToken, async (req, res) => {
+    try {
+        const { name, email } = req.body;
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.id, 
+            { name, email }, 
+            { new: true }
+        ).select('-password');
+        res.json(updatedUser);
+    } catch (error) {
+        res.status(500).json({ message: "Error updating user" });
+    }
+});
 module.exports = router;

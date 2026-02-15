@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, QrCode, LogOut, ChevronRight, Menu, ChevronLeft } from 'lucide-react';
+import { LayoutDashboard, QrCode, LogOut, ChevronRight, Menu, ChevronLeft, Users } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const SideBar = ({ isCollapsed, setIsCollapsed }) => {
@@ -19,6 +19,7 @@ const SideBar = ({ isCollapsed, setIsCollapsed }) => {
     const menuItems = [
         { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/dashboard' },
         { name: 'QR Tables', icon: <QrCode size={20} />, path: '/qrs' },
+        { name: 'Users', icon: <Users size={20} />, path: '/users' },
     ];
 
     const itemStyle = (isActive) => ({

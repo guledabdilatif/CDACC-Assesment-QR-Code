@@ -6,6 +6,7 @@ import Login from "./pages/Login"; // New
 import Dashboard from "./pages/Dashboard/Dashboard"; // New
 import ProtectedRoute from "./utils/ProtectedRoute"; // New
 import Profile from "./Components/Profile";
+import UsersPage from "./pages/UsersPage";
 
 export default function App() {
   return (
@@ -46,6 +47,11 @@ export default function App() {
       < Route path="/profile" element={
         < ProtectedRoute >
           <Profile />
+        </ProtectedRoute >
+      } />
+      < Route path="/users" element={
+        < ProtectedRoute >
+          <UsersPage />
         </ProtectedRoute >
       } />
 
