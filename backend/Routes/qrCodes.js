@@ -1,7 +1,62 @@
 const express = require('express');
 const router = express.Router();
 const Record = require('../models/Record');
+const mongoose = require('mongoose'); // This fixes the 'ReferenceError'
 
+// Define the Schema for the "File" where all submitted data will go
+const submissionSchema = new mongoose.Schema({
+  centerName: String,
+  serialNo: String,
+  courseName: String,
+  level: String,
+  unitCode: String,
+  unitName: String,
+  totalTools: Number,
+  c1name: String,
+  c1reg: String,
+  c2name: String,
+  c2reg: String,
+  headName: String,
+  supervisorName: String,
+  submittedAt: { type: Date, default: Date.now }
+}, { strict: false }); // 'strict: false' ensures all data from the frontend is saved
+
+// Create the Model
+const Submission = mongoose.model('Submission', submissionSchema);
+
+// THE SUBMISSION ROUTE
+// This is called when you click the button on http://localhost:5173/record/:id
+router.post('/submissions', async (req, res) => {
+  try {
+    const newSubmission = new Submission(req.body);
+    await newSubmission.save();
+    res.status(201).json({ message: "Submitted successfully" });
+  } catch (error) {
+    // 11000 is the MongoDB code for "Duplicate Key"
+    if (error.code === 11000) {
+      return res.status(400).json({ 
+        message: "Duplicate record", 
+        code: 11000 
+      });
+    }
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+// This is the GET route the Dashboard needs to download the Excel
+router.get('/submissions', async (req, res) => {
+  try {
+    // Find everything in the Submissions collection
+    const submissions = await Submission.find({}); 
+    res.status(200).json(submissions);
+  } catch (error) {
+    console.error("Error fetching submissions:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+// Export the router
+module.exports = router;
 // 1. CREATE: Add a new record (POST)
 router.post('/qr', async (req, res) => {
   try {

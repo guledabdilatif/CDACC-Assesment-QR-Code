@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Database, Users, QrCode, TrendingUp } from 'lucide-react';
+import { Database, Users, QrCode, TrendingUp, Download } from 'lucide-react'; // Added Download icon
 import Navbar from '../../Components/Navbar';
 import SideBar from '../../utils/SideBar';
+import * as XLSX from 'xlsx'; // Import xlsx
 
 const ApiUrl = import.meta.env.VITE_API_URL;
 
 const Dashboard = () => {
     const [stats, setStats] = useState({ totalRecords: 0, totalUsers: 0 });
     const [chartData, setChartData] = useState([]);
+    const [rawRecords, setRawRecords] = useState([]); // Store raw data for Excel export
 
-    // 1. ADDED: Shared state for collapsible behavior
     const [isCollapsed, setIsCollapsed] = useState(false);
     const sidebarWidth = isCollapsed ? '80px' : '250px';
 
@@ -30,7 +31,8 @@ const Dashboard = () => {
                     totalRecords: recordsRes.data.length
                 });
 
-                // Formatting data for the chart
+                setRawRecords(recordsRes.data); // Save for Excel
+
                 const formattedData = recordsRes.data.map(rec => ({
                     date: new Date(rec.dateCreated).toLocaleDateString(),
                     count: 1
@@ -42,6 +44,32 @@ const Dashboard = () => {
         };
         fetchDashboardData();
     }, []);
+
+    // --- NEW: EXCEL DOWNLOAD FUNCTION ---
+   const downloadExcel = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        const headers = { 'Authorization': `Bearer ${token}` };
+
+        // STOP: Make sure this URL is /submissions
+        // If you use /qr here, it will download EVERYTHING in your database
+        const res = await axios.get(`${ApiUrl}/submissions`, { headers });
+        const submittedData = res.data;
+
+        if (submittedData.length === 0) {
+            alert("No data has been submitted for verification yet.");
+            return;
+        }
+
+        const worksheet = XLSX.utils.json_to_sheet(submittedData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Verified Submissions");
+        XLSX.writeFile(workbook, "Verified_Report.xlsx");
+    } catch (err) {
+        console.error("Download error", err);
+        alert("Failed to fetch verified data.");
+    }
+};
 
     const StatCard = ({ title, value, icon: Icon, color }) => (
         <div style={{
@@ -60,7 +88,6 @@ const Dashboard = () => {
 
     return (
         <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f8fafc' }}>
-            {/* 2. UPDATED: Pass props to SideBar */}
             <SideBar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
 
             <div style={{
@@ -73,9 +100,34 @@ const Dashboard = () => {
             }}>
                 <Navbar />
                 <main style={{ padding: '2rem', marginTop: '70px' }}>
-                    <div style={{ marginBottom: '2rem' }}>
-                        <h1 style={{ color: '#1e293b', marginBottom: '0.5rem' }}>System Overview</h1>
-                        <p style={{ color: '#64748b' }}>Welcome back! Here is what's happening with your QR records.</p>
+                    
+                    {/* Header with Download Button */}
+                    <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                        <div>
+                            <h1 style={{ color: '#1e293b', marginBottom: '0.5rem' }}>System Overview</h1>
+                            <p style={{ color: '#64748b' }}>Welcome back! Here is what's happening with your QR records.</p>
+                        </div>
+                        
+                        <button 
+                            onClick={downloadExcel}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                background: '#1e293b',
+                                color: 'white',
+                                padding: '10px 20px',
+                                borderRadius: '8px',
+                                border: 'none',
+                                cursor: 'pointer',
+                                fontWeight: '500',
+                                transition: 'background 0.2s'
+                            }}
+                            onMouseOver={(e) => e.target.style.background = '#334155'}
+                            onMouseOut={(e) => e.target.style.background = '#1e293b'}
+                        >
+                            <Download size={18} /> Export Excel
+                        </button>
                     </div>
 
                     {/* STATS ROW */}
