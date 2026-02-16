@@ -23,9 +23,7 @@ const submissionSchema = new mongoose.Schema({
 
 // Create the Model
 const Submission = mongoose.model('Submission', submissionSchema);
-
 // THE SUBMISSION ROUTE
-// This is called when you click the button on http://localhost:5173/record/:id
 router.post('/submissions', async (req, res) => {
   try {
     const newSubmission = new Submission(req.body);

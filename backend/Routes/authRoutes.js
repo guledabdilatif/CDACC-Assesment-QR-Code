@@ -105,25 +105,35 @@ router.get('/me', verifyToken, async (req, res) => {
 });
 
 // 2. UPDATE PASSWORD
-router.post('/update-password', verifyToken, async (req, res) => {
+router.put('/users/:id', verifyToken, async (req, res) => {
     try {
-        const { newPassword } = req.body;
-        
-        if (!newPassword || newPassword.length < 6) {
-            return res.status(400).json({ message: "Password must be at least 6 characters" });
+        const { name, email, password } = req.body;
+        const updateData = { name, email };
+
+        // Only hash and update password if a value was actually sent
+        if (password && password.trim() !== "") {
+            // Check length requirement
+            if (password.length < 6) {
+                return res.status(400).json({ message: "Password must be at least 6 characters" });
+            }
+            const salt = await bcrypt.genSalt(10);
+            updateData.password = await bcrypt.hash(password, salt);
         }
 
-        // Hash the new password
-        const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.id, 
+            updateData, 
+            { new: true } // Returns the updated document
+        );
 
-        // Update the user document
-        await User.findByIdAndUpdate(req.user.id, {
-            password: hashedPassword
-        });
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
 
-        res.json({ message: "Password updated successfully!" });
+        res.json({ message: "User updated successfully!", user: updatedUser });
     } catch (error) {
-        res.status(500).json({ message: "Error updating password", error });
+        console.error(error);
+        res.status(500).json({ message: "Error updating user", error });
     }
 });
 
@@ -151,4 +161,44 @@ router.put('/users/:id', verifyToken, async (req, res) => {
         res.status(500).json({ message: "Error updating user" });
     }
 });
+
+// update password 
+// router.js
+router.post('/update-password', verifyToken, async (req, res) => {
+    try {
+        const { newPassword } = req.body;
+        
+        // 1. Validate input
+        if (!newPassword || newPassword.length < 6) {
+            return res.status(400).json({ message: "Password must be at least 6 characters" });
+        }
+
+        // 2. Check if user exists (Debug: log the user id found by verifyToken)
+        console.log("Updating password for User ID:", req.user.id || req.user._id);
+
+        const userId = req.user.id || req.user._id; 
+        if (!userId) {
+            return res.status(401).json({ message: "User ID not found in token" });
+        }
+
+        // 3. Hash the new password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        // 4. Update the user document
+        const updatedUser = await User.findByIdAndUpdate(userId, {
+            password: hashedPassword
+        });
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found in database" });
+        }
+
+        res.json({ message: "Password updated successfully!" });
+    } catch (error) {
+        console.error("Update Error:", error);
+        res.status(500).json({ message: "Internal Server Error", error: error.message });
+    }
+});
+
 module.exports = router;

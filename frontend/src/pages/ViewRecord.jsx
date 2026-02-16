@@ -16,7 +16,6 @@ import '../css/styles.css';
 import { useEffect, useState } from "react";
 
 const ApiUrl = import.meta.env.VITE_API_URL;
-
 export default function VerificationDetail() {
   const [qrCode, setQrCode] = useState({});
   const [loading, setLoading] = useState(false);

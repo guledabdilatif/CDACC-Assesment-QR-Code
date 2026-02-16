@@ -52,14 +52,16 @@ export default function UsersPage() {
     };
 
     const handleCopy = (text) => {
+        if (!text) return;
         navigator.clipboard.writeText(text);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
 
+    // FIX 1: Allow the password to be passed into the state instead of resetting to ''
     const handleOpenModal = (mode, user = { name: '', email: '', password: '' }) => {
         setModalMode(mode);
-        setSelectedUser({ ...user, password: '' }); 
+        setSelectedUser({ ...user }); // Spreads the existing user including password
         setShowPasswordInModal(false);
         setShowModal(true);
     };
@@ -71,15 +73,22 @@ export default function UsersPage() {
             if (modalMode === 'add') {
                 await axios.post(`${ApiUrl}/register`, selectedUser);
             } else if (modalMode === 'edit') {
-                const updateData = { name: selectedUser.name, email: selectedUser.email };
-                if (selectedUser.password) updateData.password = selectedUser.password;
+                // FIX 2: Ensure password is included in the update payload
+                const updateData = { 
+                    name: selectedUser.name, 
+                    email: selectedUser.email,
+                    password: selectedUser.password 
+                };
+                
                 await axios.put(`${ApiUrl}/users/${selectedUser._id}`, updateData, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
             }
             setShowModal(false);
             fetchUsers();
-        } catch (err) { alert(err.response?.data?.message || "Operation failed"); }
+        } catch (err) { 
+            alert(err.response?.data?.message || "Operation failed"); 
+        }
     };
 
     const handleDelete = async (id) => {
@@ -95,7 +104,6 @@ export default function UsersPage() {
 
     return (
         <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f8fafc' }}>
-            {/* Sidebar usually handles its own mobile visibility via isCollapsed */}
             <SideBar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
             
             <div style={{ 
@@ -107,7 +115,6 @@ export default function UsersPage() {
                 <Navbar isCollapsed={isCollapsed} />
                 
                 <main style={{ padding: isMobile ? '1rem' : '2rem', marginTop: '70px' }}>
-                    {/* Header: Stack vertically on small screens */}
                     <div style={{ 
                         display: 'flex', 
                         flexDirection: isMobile ? 'column' : 'row',
@@ -124,12 +131,11 @@ export default function UsersPage() {
                         </button>
                     </div>
 
-                    {/* Table Container: Allow horizontal scroll on mobile */}
                     <div style={{ 
                         background: 'white', 
                         borderRadius: '12px', 
                         boxShadow: '0 4px 6px rgba(0,0,0,0.05)', 
-                        overflowX: 'auto' // Crucial for mobile
+                        overflowX: 'auto' 
                     }}>
                         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '600px' }}>
                             <thead style={{ backgroundColor: '#f1f5f9', color: '#475569' }}>
@@ -169,7 +175,6 @@ export default function UsersPage() {
                 </main>
             </div>
 
-            {/* MODAL: Full screen width on mobile */}
             {showModal && (
                 <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000, backdropFilter: 'blur(3px)', padding: '20px' }}>
                     <div style={{ 
@@ -205,9 +210,9 @@ export default function UsersPage() {
                                     <input 
                                         type={showPasswordInModal ? "text" : "password"} 
                                         style={{ width: '100%', padding: '10px', paddingRight: '60px', borderRadius: '8px', border: '1px solid #cbd5e1', boxSizing: 'border-box' }} 
-                                        value={selectedUser.password} 
+                                        value={selectedUser.password || ''} 
                                         onChange={(e) => setSelectedUser({ ...selectedUser, password: e.target.value })} 
-                                        placeholder={modalMode === 'edit' ? "Keep current" : "Enter password"}
+                                        placeholder="Enter password"
                                         required={modalMode === 'add'} 
                                     />
                                     <div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', display: 'flex', gap: '8px' }}>
