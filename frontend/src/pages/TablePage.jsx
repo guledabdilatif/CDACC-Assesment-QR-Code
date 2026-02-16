@@ -28,10 +28,68 @@ export default function TablePage() {
   }, []);
 
   const handleDownloadAllPDF = () => {
-    const doc = new jsPDF('p', 'mm', 'a4');
-    // ... (Your existing PDF logic)
-    doc.save("CDACC_Official_QRs.pdf");
-  };
+  const doc = new jsPDF('p', 'mm', 'a4');
+  const pageWidth = 210;
+  const margin = 15;
+  const qrSize = 40; // Size of QR code in mm
+  const colWidth = (pageWidth - (margin * 2)) / 3; // Space for each of the 3 columns
+  
+  let xOffset = margin;
+  let yOffset = 25;
+  let count = 0;
+
+  qrData.forEach((item, index) => {
+    const canvas = document.getElementById(`qr-${item._id}`);
+    
+    if (canvas) {
+      const qrImage = canvas.toDataURL("image/png");
+
+      // --- Text Formatting ---
+      doc.setFontSize(8);
+      doc.setFont(undefined, 'bold');
+      // Center Name (Truncated if too long)
+      const centerText = doc.splitTextToSize(item.centerName.toUpperCase(), colWidth - 5);
+      doc.text(centerText, xOffset + (qrSize / 2), yOffset, { align: "center" });
+
+      doc.setFontSize(7);
+      doc.setFont(undefined, 'normal');
+      // Course & Unit
+      const courseText = doc.splitTextToSize(`${item.courseName} - ${item.unitName}`, colWidth - 5);
+      doc.text(courseText, xOffset + (qrSize / 2), yOffset + 7, { align: "center" });
+
+      // --- Draw QR Code ---
+      // Positioned below the text
+      doc.addImage(qrImage, 'PNG', xOffset, yOffset + 12, qrSize, qrSize);
+      
+      // Serial Number below QR
+      doc.setFontSize(6);
+      doc.text(`SN: ${item.serialNo}`, xOffset + (qrSize / 2), yOffset + qrSize + 16, { align: "center" });
+
+      // --- Layout Logic ---
+      count++;
+      
+      if (count % 3 === 0) {
+        // Move to next row after 3 QRs
+        xOffset = margin;
+        yOffset += 75; // Vertical spacing between rows
+      } else {
+        // Move to next column
+        xOffset += colWidth;
+      }
+
+      // --- Page Management ---
+      // If the next row would exceed page height (A4 is ~297mm)
+      if (yOffset > 240 && (index + 1) < qrData.length) {
+        doc.addPage();
+        yOffset = 25;
+        xOffset = margin;
+        count = 0;
+      }
+    }
+  });
+
+  doc.save("CDACC_Grid_QRs.pdf");
+};
 
   async function DeleteQrCode(id) {
     if (!window.confirm("Are you sure?")) return;
