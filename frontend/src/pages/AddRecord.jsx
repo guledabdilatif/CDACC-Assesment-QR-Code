@@ -4,6 +4,7 @@ import axios from 'axios';
 import { ClipboardCheck, User, BookOpen, Hash, Building2, ShieldCheck, Save } from "lucide-react";
 
 const ApiUrl = import.meta.env.VITE_API_URL;
+const token = localStorage.getItem('token');
 
 export default function AddRecord() {
   const navigate = useNavigate();
@@ -23,7 +24,8 @@ export default function AddRecord() {
     if (isEditMode) {
       const fetchRecord = async () => {
         try {
-          const response = await axios.get(`${ApiUrl}/qr/${id}`);
+          const response = await axios.get(`${ApiUrl}/qr/${id}`,
+            { headers: { Authorization: `Bearer ${token}` } });
           setForm(response.data);
         } catch (error) {
           console.error("Error fetching record:", error);
@@ -45,14 +47,16 @@ export default function AddRecord() {
     console.log("Current ID:", id);
 
     try {
-      const token = localStorage.getItem('token');
+
       if (isEditMode) {
         // Update existing record
-        await axios.put(`${ApiUrl}/qr/${id}`, form);
+        await axios.put(`${ApiUrl}/qr/${id}`, form, {
+          headers: { Authorization: `Bearer ${token}`}
+        });
         alert("Data updated successfully");
       } else {
         // Create new record
-        await axios.post(`${ApiUrl}/qr`, form,{
+        await axios.post(`${ApiUrl}/qr`, form, {
           headers: { Authorization: `Bearer ${token}` }
         });
         alert("Data inserted successfully");

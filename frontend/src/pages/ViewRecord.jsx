@@ -16,6 +16,7 @@ import '../css/styles.css';
 import { useEffect, useState } from "react";
 
 const ApiUrl = import.meta.env.VITE_API_URL;
+const token = localStorage.getItem('token');
 export default function VerificationDetail() {
   const [qrCode, setQrCode] = useState({});
   const [loading, setLoading] = useState(false);
@@ -26,7 +27,7 @@ export default function VerificationDetail() {
     async function checkStatus() {
       try {
         // Fetch the main QR data
-        const res = await axios.get(`${ApiUrl}/qr/${id}`);
+        const res = await axios.get(`${ApiUrl}/qr/${id}`, { headers: { Authorization: `Bearer ${token}` } });
         setQrCode(res.data);
 
         // 2. Optimized: Check if this serialNo exists in submissions
@@ -55,7 +56,7 @@ export default function VerificationDetail() {
       });
 
       alert("Data submitted successfully!");
-      setIsSubmitted(true); 
+      setIsSubmitted(true);
     } catch (error) {
       // 4. Improved Error Handling: Check if backend says it's a duplicate (400)
       if (error.response?.status === 400 || error.response?.data?.code === 11000) {
@@ -96,7 +97,7 @@ export default function VerificationDetail() {
             opacity: isSubmitted ? 0.8 : 1
           }}
         >
-          {isSubmitted ? <Check size={18} /> : <Send size={18} />} 
+          {isSubmitted ? <Check size={18} /> : <Send size={18} />}
           {loading ? "Submitting..." : isSubmitted ? "Already Submitted" : "Submit Verification"}
         </button>
       </div>
