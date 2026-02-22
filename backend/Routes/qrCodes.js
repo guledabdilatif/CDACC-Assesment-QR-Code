@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Record = require('../models/Record');
-const mongoose = require('mongoose'); // This fixes the 'ReferenceError'
+const mongoose = require('mongoose'); 
+const verifyToken = require('../middlewares/auth.middleware'); 
 
-// Define the Schema for the "File" where all submitted data will go
+
 const submissionSchema = new mongoose.Schema({
   centerName: String,
   serialNo: String,
@@ -19,7 +20,7 @@ const submissionSchema = new mongoose.Schema({
   headName: String,
   supervisorName: String,
   submittedAt: { type: Date, default: Date.now }
-}, { strict: false }); // 'strict: false' ensures all data from the frontend is saved
+}, { strict: false }); 
 
 // Create the Model
 const Submission = mongoose.model('Submission', submissionSchema);
@@ -32,9 +33,9 @@ router.post('/submissions', async (req, res) => {
   } catch (error) {
     // 11000 is the MongoDB code for "Duplicate Key"
     if (error.code === 11000) {
-      return res.status(400).json({ 
-        message: "Duplicate record", 
-        code: 11000 
+      return res.status(400).json({
+        message: "Duplicate record",
+        code: 11000
       });
     }
     console.error(error);
@@ -42,10 +43,10 @@ router.post('/submissions', async (req, res) => {
   }
 });
 // This is the GET route the Dashboard needs to download the Excel
-router.get('/submissions', async (req, res) => {
+router.get('/submissions', verifyToken, async (req, res) => {
   try {
     // Find everything in the Submissions collection
-    const submissions = await Submission.find({}); 
+    const submissions = await Submission.find({});
     res.status(200).json(submissions);
   } catch (error) {
     console.error("Error fetching submissions:", error);
@@ -53,32 +54,35 @@ router.get('/submissions', async (req, res) => {
   }
 });
 
-// Export the router
-module.exports = router;
+
 // 1. CREATE: Add a new record (POST)
-router.post('/qr', async (req, res) => {
+router.post('/qr', verifyToken, async (req, res) => {
   try {
+    req.body.user = req.user.id;
     const newRecord = new Record(req.body);
     const savedRecord = await newRecord.save();
     res.status(201).json(savedRecord);
   } catch (error) {
+    console.log(error)
     res.status(400).json({ message: "Error creating record", error });
   }
 });
 
 // 2. READ: Get all records (GET)
-router.get('/qr', async (req, res) => {
+router.get('/qr', verifyToken, async (req, res) => {
   try {
-    const records = await Record.find().sort({ dateCreated: -1 });
+      const user = req.user;
+    const records = user.role === "admin"? await Record.find().sort({ dateCreated: -1 }) : await Record.find({user:user.id}).sort({ dateCreated: -1 });
     res.json(records);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Error fetching records", error });
   }
 });
 
 // 3. READ: Get a single record by ID (GET)
 // This is what the useEffect on your frontend uses to fill the form
-router.get('/qr/:id', async (req, res) => {
+router.get('/qr/:id', verifyToken, async (req, res) => {
   try {
     const record = await Record.findById(req.params.id);
     if (!record) return res.status(404).json({ message: "Record not found" });

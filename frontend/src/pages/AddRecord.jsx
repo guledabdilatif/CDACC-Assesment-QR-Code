@@ -45,13 +45,16 @@ export default function AddRecord() {
     console.log("Current ID:", id);
 
     try {
+      const token = localStorage.getItem('token');
       if (isEditMode) {
         // Update existing record
         await axios.put(`${ApiUrl}/qr/${id}`, form);
         alert("Data updated successfully");
       } else {
         // Create new record
-        await axios.post(`${ApiUrl}/qr`, form);
+        await axios.post(`${ApiUrl}/qr`, form,{
+          headers: { Authorization: `Bearer ${token}` }
+        });
         alert("Data inserted successfully");
       }
       navigate("/qrs");

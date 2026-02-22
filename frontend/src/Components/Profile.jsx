@@ -23,6 +23,7 @@ const Profile = () => {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 setUserData(response.data);
+                console.log(response.data)
             } catch (err) {
                 console.error("Failed to fetch user data", err);
                 setErrorMsg("Could not load user profile.");

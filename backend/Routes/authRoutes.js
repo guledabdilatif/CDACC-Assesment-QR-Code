@@ -3,29 +3,16 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-
+const verifyToken = require("../middlewares/auth.middleware");
 const SALT_ROUNDS = 10;
 
-const verifyToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Extract "Bearer TOKEN"
 
-    if (!token) return res.status(401).json({ message: "Access denied. No token provided." });
-
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded; // Contains the { id: user._id } we signed earlier
-        next();
-    } catch (error) {
-        res.status(403).json({ message: "Invalid or expired token" });
-    }
-};
-
-module.exports = verifyToken;
 
 // 1. REGISTER: Create a new user (POST)
-router.post('/register', async (req, res) => {
+router.post('/register', verifyToken, async (req, res) => {
     try {
+        if(req.user.role != "admin") return res.status(403).send();
+        
         const { name, email, password } = req.body;
 
         // Check if user exists
@@ -58,12 +45,12 @@ router.post('/login', async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        
-        res.json({ 
-            message: "Success", 
-            token, 
-            user: { name: user.name, email: user.email } 
+        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        res.json({
+            message: "Success",
+            token,
+            user: { name: user.name, email: user.email, role:user.role }
         });
     } catch (error) {
         res.status(500).json({ message: "Login error", error });
@@ -71,8 +58,10 @@ router.post('/login', async (req, res) => {
 });
 
 // 3. READ: Get all users (GET)
-router.get('/users', async (req, res) => {
+router.get('/users', verifyToken, async (req, res) => {
     try {
+        if(req.user.role != "admin") return res.status(403).send();
+
         const users = await User.find().select('-password'); // Exclude password from results
         res.json(users);
     } catch (error) {
@@ -81,8 +70,9 @@ router.get('/users', async (req, res) => {
 });
 
 // 4. READ: Get a single user by ID (GET)
-router.get('/users/:id', async (req, res) => {
+router.get('/users/:id', verifyToken, async (req, res) => {
     try {
+        if(req.user.role != "admin") return res.status(403).send();
         const user = await User.findById(req.params.id).select('-password');
         if (!user) return res.status(404).json({ message: "User not found" });
         res.json(user);
@@ -95,9 +85,9 @@ router.get('/me', verifyToken, async (req, res) => {
     try {
         // req.user.id comes from the decoded token in our middleware
         const user = await User.findById(req.user.id).select('-password');
-        
+
         if (!user) return res.status(404).json({ message: "User not found" });
-        
+
         res.json(user);
     } catch (error) {
         res.status(500).json({ message: "Error fetching profile", error });
@@ -121,8 +111,8 @@ router.put('/users/:id', verifyToken, async (req, res) => {
         }
 
         const updatedUser = await User.findByIdAndUpdate(
-            req.params.id, 
-            updateData, 
+            req.params.id,
+            updateData,
             { new: true } // Returns the updated document
         );
 
@@ -152,8 +142,8 @@ router.put('/users/:id', verifyToken, async (req, res) => {
     try {
         const { name, email } = req.body;
         const updatedUser = await User.findByIdAndUpdate(
-            req.params.id, 
-            { name, email }, 
+            req.params.id,
+            { name, email },
             { new: true }
         ).select('-password');
         res.json(updatedUser);
@@ -163,11 +153,10 @@ router.put('/users/:id', verifyToken, async (req, res) => {
 });
 
 // update password 
-// router.js
 router.post('/update-password', verifyToken, async (req, res) => {
     try {
         const { newPassword } = req.body;
-        
+
         // 1. Validate input
         if (!newPassword || newPassword.length < 6) {
             return res.status(400).json({ message: "Password must be at least 6 characters" });
@@ -176,7 +165,7 @@ router.post('/update-password', verifyToken, async (req, res) => {
         // 2. Check if user exists (Debug: log the user id found by verifyToken)
         console.log("Updating password for User ID:", req.user.id || req.user._id);
 
-        const userId = req.user.id || req.user._id; 
+        const userId = req.user.id || req.user._id;
         if (!userId) {
             return res.status(401).json({ message: "User ID not found in token" });
         }

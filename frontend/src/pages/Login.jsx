@@ -29,7 +29,9 @@ const Login = () => {
             
             if (response.data.token) {
                 localStorage.setItem('token', response.data.token);
-                navigate('/dashboard');
+                const role = response.data.user.role;
+
+                role != "admin" ? navigate("/qrs") : navigate('/dashboard');
             }
         } catch (err) {
             console.error("Login error:", err);

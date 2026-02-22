@@ -1,10 +1,16 @@
-import React from 'react';
-import { LayoutDashboard, QrCode, LogOut, ChevronRight, Menu, ChevronLeft, Users } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { LayoutDashboard, QrCode, LogOut, Menu, ChevronLeft, Users } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
+const ApiUrl = import.meta.env.VITE_API_URL;
 
 const SideBar = ({ isCollapsed, setIsCollapsed }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    
+    // --- State for User Data ---
+    const [userRole, setUserRole] = useState('user'); // Default to 'user'
+    const [loading, setLoading] = useState(true);
 
     const colors = {
         navy: '#1a365d',
@@ -14,13 +20,57 @@ const SideBar = ({ isCollapsed, setIsCollapsed }) => {
         textMuted: '#94a3b8'
     };
 
+    // --- Fetch Logic inside Sidebar ---
+    useEffect(() => {
+        const fetchUserRole = async () => {
+            const token = localStorage.getItem('token'); // Or wherever you store it
+
+            if (!token) {
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const response = await axios.get(`${ApiUrl}/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                setUserRole(response.data.role); // Set role from response
+            } catch (err) {
+                console.error("Failed to fetch user role in sidebar", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUserRole();
+    }, []);
+
     const sidebarWidth = isCollapsed ? '80px' : '250px';
 
+    // --- Menu Configuration ---
     const menuItems = [
-        { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/dashboard' },
-        { name: 'QR Tables', icon: <QrCode size={20} />, path: '/qrs' },
-        { name: 'Users', icon: <Users size={20} />, path: '/users' },
+        { 
+            name: 'Dashboard', 
+            icon: <LayoutDashboard size={20} />, 
+            path: '/dashboard', 
+            roles: ['admin'] 
+        },
+        { 
+            name: 'QR Tables', 
+            icon: <QrCode size={20} />, 
+            path: '/qrs', 
+            roles: ['admin', 'user'] 
+        },
+        { 
+            name: 'Users', 
+            icon: <Users size={20} />, 
+            path: '/users', 
+            roles: ['admin'] 
+        },
     ];
+
+    // Filter items based on fetched state
+    const filteredMenuItems = menuItems.filter(item => item.roles.includes(userRole));
 
     const itemStyle = (isActive) => ({
         display: 'flex',
@@ -74,7 +124,7 @@ const SideBar = ({ isCollapsed, setIsCollapsed }) => {
 
             {/* Nav */}
             <nav style={{ flex: 1, marginTop: isCollapsed ? '60px' : '10px' }}>
-                {menuItems.map((item) => (
+                {!loading && filteredMenuItems.map((item) => (
                     <div 
                         key={item.name} 
                         onClick={() => navigate(item.path)}

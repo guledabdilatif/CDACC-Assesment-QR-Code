@@ -14,6 +14,11 @@ const RecordSchema = new mongoose.Schema({
   c2reg: String,
   headName: String,
   supervisorName: String,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+  },
   dateCreated: { type: Date, default: Date.now }
 });
 

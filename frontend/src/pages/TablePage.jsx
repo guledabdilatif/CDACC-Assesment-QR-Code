@@ -20,7 +20,10 @@ export default function TablePage() {
   useEffect(() => {
     async function fetchQrCodes() {
       try {
-        const response = await axios.get(`${ApiUrl}/qr`);
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${ApiUrl}/qr`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
         setQrData(response.data);
       } catch (err) { console.error("Fetch error:", err); }
     }

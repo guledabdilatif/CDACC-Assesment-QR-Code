@@ -71,7 +71,9 @@ export default function UsersPage() {
         const token = localStorage.getItem('token');
         try {
             if (modalMode === 'add') {
-                await axios.post(`${ApiUrl}/register`, selectedUser);
+                await axios.post(`${ApiUrl}/register`, selectedUser,{
+                    headers: { Authorization: `Bearer ${token}` }
+                });
             } else if (modalMode === 'edit') {
                 // FIX 2: Ensure password is included in the update payload
                 const updateData = { 
